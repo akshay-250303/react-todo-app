@@ -11,21 +11,41 @@ class StateProvider extends Component {
             query: '',
             mode: MODE_CREATE,
             filter: FILTER_ALL,
-            list: getAll()
-        }
+            list: getAll(),
+            sortBy:"",
+        };
+    }
+
+    sortTasks(sortBy){
+        let sortedList = [...this.state.list];
+        if(sortBy === "dateAsc"){
+            sortedList.sort(
+                (a, b) => new Date(a.dueDate) - new Date(b.dueDate)
+                );
+                }else if(sortBy === "dateDesc"){
+                    sortedList.sort(
+                        (a, b) => new Date(b.dueDate) - new Date(a.dueDate)
+                        );
+                } else if (sortBy === "priority"){
+                    const priorityOrder = { high:1, medium:2,low:3};
+                    sortedList.sort(
+                        (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
+                        );
+                }
+                this.setState({list:sortedList,sortBy:sortBy});
     }
 
     render() {
         let children = wrapChildrenWith(this.props.children, {
             data: this.state,
-            actions: objectWithOnly(this, ['addNew', 'changeFilter', 'changeStatus', 'changeMode', 'setSearchQuery'])
+            actions: objectWithOnly(this, ['addNew', 'changeFilter', 'changeStatus', 'changeMode', 'setSearchQuery','sortTasks']),
         });
 
         return <div>{children}</div>;
     }
 
-    addNew(text) {
-        let updatedList = addToList(this.state.list, {text, completed: false});
+    addNew(text,priority,dueDate) {
+        let updatedList = addToList(this.state.list, {text, completed: false,priority,dueDate});
 
         this.setState({list: updatedList});
     }

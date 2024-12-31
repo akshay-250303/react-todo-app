@@ -10,9 +10,19 @@ class CheckBox extends Component {
 
     handleChange(e) {
         const {checked} = e.target;
+        if(checked) {
+            const confirmMessage = window.confirm(
+                "Are you sure you had completed this task?"
+            );
 
-        this.setState({checked});
-        this.props.onChange(checked);
+            if (confirmMessage){
+                this.setState({checked});
+                this.props.onChange(checked);
+            } else {
+                e.target.checked = false;
+            }
+        }
+
     }
 
     render() {
